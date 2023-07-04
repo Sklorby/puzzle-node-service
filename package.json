@@ -1,0 +1,23 @@
+{
+  "name": "puzzle-node-service",
+  "version": "1.0.0",
+  "description": "Service to serve puzzle game",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm run test",
+    "start": "node app.js"
+  },
+  "author": "Phelimon Sarpaning",
+  "license": "ISC",
+  "dependencies": {
+    "@types/redis": "^2.8.28",
+    "connect-redis": "^5.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "ioredis": "^5.3.2",
+    "mongodb": "^5.5.0",
+    "prettier": "^2.8.8",
+    "redis": "^4.6.7",
+    "socket.io": "^4.6.1"
+  }
+}
