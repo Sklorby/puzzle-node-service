@@ -14,6 +14,7 @@ const io = require('socket.io')(server, {
 const cors = require('cors');
 const { dataActions, setupPlayerByRoom, getPlayerSprites } = require('./db');
 const { client } = require('./mongo');
+const { addObject } = require('./utils');
 
 const PORT = 3001;
 
@@ -110,6 +111,29 @@ io.on('connection', (socket) => {
 
     // Generate a unique key for the room data
     const key = `websocket_data:${roomId}`;
+
+
+    const playerObject = values;
+
+
+
+    // Check if the object exists in Redis cache
+doesObjExistInRedis(key, (exists) => {
+  if (exists) {
+    // Retrieve the object from Redis and perform operations
+    getObjFromRedis(key, (retrievedObj) => {
+      const res = addObject(retrievedObj, playerId, playerObject);
+
+      // Store the modified object back in Redis
+      storeObjInRedis(key, res);
+    });
+  } else {
+
+    const res = addObject([], playerId, playerObject);
+    // Store the modified object back in Redis
+    storeObjInRedis(key, res);
+  }
+});
 
     console.log("the key", key);
 
@@ -215,6 +239,45 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 });
+
+
+// Function to retrieve the object from Redis cache
+function getObjFromRedis(key, callback) {
+  redisClient.get(key, (error, objStr) => {
+    if (error) {
+      console.error("Error retrieving object from Redis:", error);
+      callback([]);
+    } else {
+      const obj = JSON.parse(objStr) || [];
+      callback(obj || []);
+    }
+  });
+}
+
+
+// Function to store the object in Redis cache
+function storeObjInRedis(key, obj) {
+  redisClient.set(key, JSON.stringify(obj), (error) => {
+    if (error) {
+      console.error("Error storing object in Redis:", error);
+    } else {
+      console.log("Object stored in Redis cache");
+    }
+  });
+}
+
+
+// Function to check if the object exists in Redis cache
+function doesObjExistInRedis(key, callback) {
+  redisClient.exists(key, (error, exists) => {
+    if (error) {
+      console.error("Error checking object existence in Redis:", error);
+      callback(false);
+    } else {
+      callback(exists === 1);
+    }
+  });
+}
 
 server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

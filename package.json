@@ -19,5 +19,9 @@
     "prettier": "^2.8.8",
     "redis": "^4.6.7",
     "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.44.0",
+    "eslint-plugin-react": "^7.32.2"
   }
 }

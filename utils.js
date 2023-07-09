@@ -122,15 +122,15 @@ function removeObject(obj, playerName, objectId) {
 }
 
 
-const obj = [
-  { Jake: [{ id: 1, name: "Object 1" }, { id: 2, name: "Object 2" }] },
-  { John: [{ id: 3, name: "Object 3" }, { id: 4, name: "Object 4" }] }
-];
+// const obj = [
+//   { Jake: [{ id: 1, name: "Object 1" }, { id: 2, name: "Object 2" }] },
+//   { John: [{ id: 3, name: "Object 3" }, { id: 4, name: "Object 4" }] }
+// ];
 
-const newObject  = { id:3, name: "Object 6" }
-const res = addObject(obj, 'Andy', newObject);
+// const newObject  = { id:3, name: "Object 6" }
+// const res = removeObject(obj, 'John', 3);
 
-console.log('the rse', JSON.stringify(res));
+// console.log('the rse', JSON.stringify(res));
 
 module.exports = {
   addObject,
