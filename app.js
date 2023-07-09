@@ -26,16 +26,6 @@ const room_collection = 'room_values';
 
 let redisClient = new Redis();;
 
-//connect to redis
-// (async () => {
-//   redisClient = new Redis();
-//   console.log("connecting redis");
-//   redisClient.on("error", (error) => console.error(`Error : ${error}`));
-
-//   await redisClient.connect();
-//   console.log("Redis connected")
-// })();
-
 // Connect to the server
 client.connect((err) => {
   if (err) {
@@ -46,18 +36,6 @@ client.connect((err) => {
 
   // Further operations will be performed here
 });
-
-// redisClient.on('connect', function() {
-//   console.log('connected redis')
-// })
-
-// redisClient.set('frame', 'ReactJS', function(err, reply) {
-//   console.log("I am sets", reply);
-
-//   if(err){
-//     console.log("error", err);
-//   }
-// })
 
 const db = client.db(dbName);
 const collection = db.collection(room_collection);
@@ -72,20 +50,6 @@ app.use(cors(corsOptions));
 
 const players = {};
 
-
-app.get('/getInitialSprite/:playerId/:roomId', function (req, res) {
-  const playerId = req.params.playerId;
-  const roomId = req.params.roomId;
-
-  const newSpriteObject = getPlayerSprites(roomId,playerId);
-
-
-})
-
-
-
-
-
 io.on('connection', (socket) => {
   console.log('a user connected');
 
@@ -96,12 +60,40 @@ io.on('connection', (socket) => {
   //   timestamp: new Date()
   // }
   // dataActions(roomData, 'djjhsdhsjf')
+
+  socket.on('spriteRequest', (requestingPlayer, spriteName, respondingPlayer) => {
+    console.log(`Receieved request from ${requestingPlayer} to get sprite ${spriteName} from ${respondingPlayer}`);
+    
+    const socketId = players[respondingPlayer];
+    redisClient.get(respondingPlayer, (err, targetSocketId) => {
+      if (targetSocketId) {
+        console.log(`The socket id for responding player: ${respondingPlayer} is  ${targetSocketId}`);
+        io.to(targetSocketId).emit('spriteRequest', requestingPlayer, spriteName);
+      }
+    });
+  });
+
+  socket.on('sendToRequestingPlayer', (requestingPlayer, playerObject) => {
+    console.log(`Sending object to ${requestingPlayer}`);
+
+    let name = `${requestingPlayer}-list`;
+    redisClient.lpush(name, playerObject);
+    
+    const socketId = players[requestingPlayer];
+    redisClient.get(requestingPlayer, (err, targetSocketId) => {
+      if (targetSocketId) {
+        console.log(`Sending request to object to requesting player: ${requestingPlayer} with socketId ${targetSocketId}`);
+        io.to(targetSocketId).emit('exchangedSprites', playerObject);
+      }
+    });
+  });
   
 
   // Register a player with a socket ID and optional name
   socket.on('registerPlayer', (name) => {
     const playerId = socket.id;
     players[playerId] = { name };
+    redisClient.set(playerId, socket.id)
     console.log(`Player ${playerId} registered with name "${name}".`);
   });
 
@@ -152,6 +144,8 @@ io.on('connection', (socket) => {
     socket.join(roomId);
     socket.roomId = roomId;
     const playerId = players[socket.id].name;
+
+    redisClient.set(playerId, socket.id);
 
     console.log(`player ${socket.id} with name ${players[socket.id].name} joined room ${roomId}`);
 

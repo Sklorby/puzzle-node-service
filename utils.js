@@ -81,7 +81,60 @@ return {
 }
 
 
+
+function addObject(obj, playerName, object) {
+  const playerIndex = obj.findIndex((item) => item.hasOwnProperty(playerName));
+
+  if (playerIndex === -1) {
+    // Player does not exist, add a new entry
+    obj.push({ [playerName]: [object] });
+  } else {
+    // Player exists, update or add the object
+    const playerObj = obj[playerIndex][playerName];
+    const objectIndex = playerObj.findIndex((item) => item.id === object.id);
+
+    if (objectIndex === -1) {
+      // Object does not exist, add it to the player's array
+      playerObj.push(object);
+    } else {
+      // Object exists, update it
+      playerObj[objectIndex] = object;
+    }
+  }
+
+  return obj; // Return the modified obj array
+}
+
+function removeObject(obj, playerName, objectId) {
+  const playerIndex = obj.findIndex((item) => item.hasOwnProperty(playerName));
+
+  if (playerIndex !== -1) {
+    // Player exists, remove the object
+    const playerObj = obj[playerIndex][playerName];
+    const objectIndex = playerObj.findIndex((item) => item.id === objectId);
+
+    if (objectIndex !== -1) {
+      playerObj.splice(objectIndex, 1);
+    }
+  }
+
+  return obj; // Return the modified obj array
+}
+
+
+const obj = [
+  { Jake: [{ id: 1, name: "Object 1" }, { id: 2, name: "Object 2" }] },
+  { John: [{ id: 3, name: "Object 3" }, { id: 4, name: "Object 4" }] }
+];
+
+const newObject  = { id:3, name: "Object 6" }
+const res = addObject(obj, 'Andy', newObject);
+
+console.log('the rse', JSON.stringify(res));
+
 module.exports = {
+  addObject,
+  removeObject,
   getMessages,
   getRandomSprites,
   setPlayerObjects

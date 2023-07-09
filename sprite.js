@@ -1,7 +1,7 @@
 
 const shapeSetOne = [
     {
-      id: "blue",
+      id: "setOne-A1",
       name: "setOne-A1",
       shape: "triangle",
       borderColor: "transparent transparent #0074D9 transparent",
@@ -11,7 +11,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "red",
+      id: "setOne-A2",
       name: "setOne-A2",
       shape: "triangle",
       borderColor: "transparent transparent #FF4136 transparent",
@@ -21,7 +21,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "green",
+      id: "settOne-A3",
       name: "settOne-A3",
       shape: "triangle",
       borderColor: "transparent transparent #2ECC40 transparent",
@@ -31,7 +31,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "purple",
+      id: "setOne-A4",
       name: "setOne-A4",
       shape: "triangle",
       borderColor: "#B10DC9 transparent transparent transparent",
@@ -44,7 +44,7 @@ const shapeSetOne = [
 
   const shapeSetTwo = [
     {
-      id: "blue",
+      id: "setTwo-A1",
       name: "setTwo-A1",
       shape: "triangle",
       borderColor: "transparent transparent #0074D9 transparent",
@@ -54,7 +54,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "red",
+      id: "setTwo-A2",
       name: "setTwo-A2",
       shape: "triangle",
       borderColor: "transparent transparent #FF4136 transparent",
@@ -64,7 +64,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "green",
+      id: "setTwo-A3",
       name: "setTwo-A3",
       shape: "triangle",
       borderColor: "transparent transparent #2ECC40 transparent",
@@ -74,7 +74,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "purple",
+      id: "setTwo-A4",
       name: "setTwo-A4",
       shape: "triangle",
       borderColor: "#B10DC9 transparent transparent transparent",
@@ -87,7 +87,7 @@ const shapeSetOne = [
 
   const shapeSetThree = [
     {
-      id: "blue",
+      id: "setThree-A1",
       name: "setThree-A1",
       shape: "triangle",
       borderColor: "transparent transparent #0074D9 transparent",
@@ -97,7 +97,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "red",
+      id: "setThree-A2",
       name: "setThree-A2",
       shape: "triangle",
       borderColor: "transparent transparent #FF4136 transparent",
@@ -107,7 +107,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "green",
+      id: "setThree-A3",
       name: "setThree-A3",
       shape: "triangle",
       borderColor: "transparent transparent #2ECC40 transparent",
@@ -117,7 +117,7 @@ const shapeSetOne = [
       vertices: [],
     },
     {
-      id: "purple",
+      id: "setThree-A4",
       name: "setThree-A4",
       shape: "triangle",
       borderColor: "#B10DC9 transparent transparent transparent",
