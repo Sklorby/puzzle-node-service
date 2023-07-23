@@ -21,7 +21,7 @@ const PORT = 3001;
 
 // Collection name
 
-let redisClient = new Redis();
+let redisClient = new Redis(process.env.REDIS_ENDPOINT_URI);
 
 // Connect to the server
 client.connect((err) => {
