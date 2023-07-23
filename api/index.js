@@ -4,7 +4,7 @@ const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
   cors: {
-    origin: 'https://research-puzzle.vercel.app',
+    origin: 'https://research-puzzle.vercel.app/*',
     methods: ['GET', 'POST'],
     allowedHeaders: ['*'],
     credentials: true,
@@ -36,7 +36,7 @@ client.connect((err) => {
 
 // http://localhost:3000
 const corsOptions = {
-  origin: 'https://research-puzzle.vercel.app',
+  origin: 'https://research-puzzle.vercel.app/*',
   credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
