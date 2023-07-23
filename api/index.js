@@ -6,7 +6,7 @@ const io = require('socket.io')(server, {
   cors: {
     origin: 'https://research-puzzle.vercel.app',
     methods: ['GET', 'POST'],
-    allowedHeaders: ['my-custom-header'],
+    allowedHeaders: ['*'],
     credentials: true,
   },
 });
