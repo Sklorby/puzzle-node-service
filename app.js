@@ -11,9 +11,9 @@ const io = require('socket.io')(server, {
   },
 });
 const cors = require('cors');
-const { dataActions, setupPlayerByRoom, getPlayerSprites } = require('../db');
-const { client } = require('../mongo');
-const { addObject, removeObject } = require('../utils');
+const { dataActions, setupPlayerByRoom, getPlayerSprites } = require('./db');
+const { client } = require('./mongo');
+const { addObject, removeObject } = require('./utils');
 
 const PORT = 3001;
 
