@@ -1,5 +1,4 @@
-
-const shapeSetOne = [
+const shapeSetOne1 = [
   {
     id: 'setOne-A1',
     name: 'setOne-A1',
@@ -42,7 +41,26 @@ const shapeSetOne = [
   },
 ];
 
-const shapeSetTwo = [
+const shapeSetOne = [
+  {
+    isVisible: true,
+    shapeUri: 'shapeB2',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeB3',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeA1',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeA3',
+  },
+];
+
+const shapeSetTwo1 = [
   {
     id: 'setTwo-A1',
     name: 'setTwo-A1',
@@ -85,7 +103,45 @@ const shapeSetTwo = [
   },
 ];
 
+const shapeSetTwo = [
+  {
+    isVisible: true,
+    shapeUri: 'shapeB4',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeB1',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeA4',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeA3',
+  },
+];
+
 const shapeSetThree = [
+  {
+    isVisible: true,
+    shapeUri: 'shapeB6',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeB2',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeA1',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeA3',
+  },
+];
+
+const shapeSetThree1 = [
   {
     id: 'setThree-A1',
     name: 'setThree-A1',
@@ -128,8 +184,12 @@ const shapeSetThree = [
   },
 ];
 
-const shape_sprites = [{'name': 'shapeSetOne', 'shapeSetOne':shapeSetOne}, {'name': 'shapeSetTwo','shapeSetTwo':shapeSetTwo}, {'name': 'shapeSetThree','shapeSetThree':shapeSetThree}];
+const shape_sprites = [
+  { name: 'shapeSetOne', shapeSetOne: shapeSetOne },
+  { name: 'shapeSetTwo', shapeSetTwo: shapeSetTwo },
+  { name: 'shapeSetThree', shapeSetThree: shapeSetThree },
+];
 
 module.exports = {
-  shape_sprites
+  shape_sprites,
 };

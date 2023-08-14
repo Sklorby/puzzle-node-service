@@ -111,7 +111,9 @@ function removeObject(obj, playerName, objectId) {
   if (playerIndex !== -1) {
     // Player exists, remove the object
     const playerObj = obj[playerIndex][playerName];
-    const objectIndex = playerObj.findIndex((item) => item.id === objectId);
+    const objectIndex = playerObj.findIndex(
+      (item) => item?.shapeUri === objectId
+    );
 
     if (objectIndex !== -1) {
       playerObj.splice(objectIndex, 1);

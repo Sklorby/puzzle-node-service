@@ -24,6 +24,9 @@ const PORT = 3001;
 let redUr = `redis://:${process.env.REDIS_PASSWORD}@${process.env.REDIS_ENDPOINT_URI}`;
 let redisClient = new Redis(redUr);
 
+// local run
+// let redisClient = new Redis();
+
 // Connect to the server
 client.connect((err) => {
   if (err) {
@@ -121,7 +124,7 @@ io.on('connection', (socket) => {
 
     const playerObject = values;
     let res = [];
-
+    console.log('The is a removal', isRemove);
     if (isRemove) {
       console.log('About to remove sprite from redis');
 
@@ -131,7 +134,7 @@ io.on('connection', (socket) => {
           console.log('It exists for removal');
           // Retrieve the object from Redis and perform operations
           getObjFromRedis(key, async (retrievedObj) => {
-            const id = values?.id;
+            const id = values?.shapeUri;
             console.log('the object id', id);
             res = await removeObject(retrievedObj, playerId, id);
             console.log('emitting values to other players:', res);
