@@ -105,6 +105,15 @@ io.on('connection', (socket) => {
     console.log(`Player ${playerId} registered with name "${name}".`);
   });
 
+  // Get all player objects for the playground
+  socket.on('getPlayground', async (roomId) => {
+    const key = `websocket_data:${roomId}`;
+    redisClient.get(key, (playgroundValues) => {
+      console.log('Playground values being sent to room', roomId);
+      socket.to(roomId).emit('playerValues', playgroundValues);
+    });
+  });
+
   // Listen for player values
   socket.on('playerValues', async (roomId, playerId, values, isRemove) => {
     console.log(
@@ -183,7 +192,7 @@ io.on('connection', (socket) => {
   });
 
   // Listen for a player joining a room
-  socket.on('joinRoom', async (roomId) => {
+  socket.on('joinRoom', async (roomId, isAdmin = false) => {
     // leave the current room if any
     if (socket.roomId) {
       socket.leave(socket.roomId);
@@ -192,6 +201,10 @@ io.on('connection', (socket) => {
     //Join the new room
     socket.join(roomId);
     socket.roomId = roomId;
+
+    if (isAdmin) {
+      return;
+    }
     const playerId = players[socket.id].name;
 
     redisClient.set(playerId, socket.id);

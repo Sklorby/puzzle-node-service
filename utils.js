@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 // @ts-check
 const { exists, client: redisClient } = require('./redis');
 const { shape_sprites } = require('./sprite');
