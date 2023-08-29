@@ -44,15 +44,15 @@ const shapeSetOne1 = [
 const shapeSetOne = [
   {
     isVisible: true,
-    shapeUri: 'shapeB2',
+    shapeUri: 'shapeA2',
   },
   {
     isVisible: true,
-    shapeUri: 'shapeB3',
+    shapeUri: 'shapeA3',
   },
   {
     isVisible: true,
-    shapeUri: 'shapeA1',
+    shapeUri: 'shapeA4',
   },
   {
     isVisible: true,
@@ -106,11 +106,11 @@ const shapeSetTwo1 = [
 const shapeSetTwo = [
   {
     isVisible: true,
-    shapeUri: 'shapeB4',
+    shapeUri: 'shapeA1',
   },
   {
     isVisible: true,
-    shapeUri: 'shapeB1',
+    shapeUri: 'shapeA1',
   },
   {
     isVisible: true,
@@ -125,11 +125,7 @@ const shapeSetTwo = [
 const shapeSetThree = [
   {
     isVisible: true,
-    shapeUri: 'shapeB6',
-  },
-  {
-    isVisible: true,
-    shapeUri: 'shapeB2',
+    shapeUri: 'shapeA2',
   },
   {
     isVisible: true,
@@ -137,7 +133,11 @@ const shapeSetThree = [
   },
   {
     isVisible: true,
-    shapeUri: 'shapeA3',
+    shapeUri: 'shapeA2',
+  },
+  {
+    isVisible: true,
+    shapeUri: 'shapeA4',
   },
 ];
 
