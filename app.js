@@ -47,6 +47,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 const players = {};
+let admins = {};
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -105,12 +106,23 @@ io.on('connection', (socket) => {
     console.log(`Player ${playerId} registered with name "${name}".`);
   });
 
+  // Register a admin with a socket ID and room name
+  socket.on('registerAdmin', (roomName) => {
+    const adminId = socket.id;
+    admins[roomName] = adminId;
+    console.log('the admins', admins);
+    const key = `websocket_admin:${roomName}`;
+    console.log('socketId for admin', socket.id, key);
+    redisClient.set(key, socket.id);
+    console.log(`Admin ${adminId} registered with room "${roomName}".`);
+  });
+
   // Get all player objects for the playground
   socket.on('getPlayground', async (roomId) => {
     const key = `websocket_data:${roomId}`;
     redisClient.get(key, (playgroundValues) => {
       console.log('Playground values being sent to room', roomId);
-      socket.to(roomId).emit('playerValues', playgroundValues);
+      socket.to(roomId).emit('playergroundObjects', playgroundValues);
     });
   });
 
@@ -146,8 +158,11 @@ io.on('connection', (socket) => {
             const id = values?.shapeUri;
             console.log('the object id', id);
             res = await removeObject(retrievedObj, playerId, id);
-            console.log('emitting values to other players:', res);
+            console.log('emitting values to other players:', res, roomId);
             socket.to(roomId).emit('playerValues', res);
+            const adminKey = `websocket_admin:${roomId}`;
+            console.log('the keeeeeeey', adminKey, admins[roomId]);
+            io.to(admins[roomId]).emit('playergroundObjects', res);
             // Store the modified object back in Redis
             storeObjInRedis(key, res);
           });
@@ -165,6 +180,9 @@ io.on('connection', (socket) => {
             res = await addObject(retrievedObj, playerId, playerObject);
             console.log('emitting values to other players:', res);
             socket.to(roomId).emit('playerValues', res);
+            const adminKey = `websocket_admin:${roomId}`;
+            console.log('the admin key in exists', adminKey, admins[roomId]);
+            io.to(admins[roomId]).emit('playergroundObjects', res);
             // Store the modified object back in Redis
             storeObjInRedis(key, res);
           });
@@ -172,6 +190,9 @@ io.on('connection', (socket) => {
           res = await addObject([], playerId, playerObject);
           console.log('emitting values to other players:', res);
           socket.to(roomId).emit('playerValues', res);
+          const adminKey = `websocket_admin:${roomId}`;
+          console.log('the admin key', adminKey, admins[roomId]);
+          io.to(admins[roomId]).emit('playergroundObjects', res);
           // Store the modified object back in Redis
           storeObjInRedis(key, res);
         }
@@ -193,6 +214,7 @@ io.on('connection', (socket) => {
 
   // Listen for a player joining a room
   socket.on('joinRoom', async (roomId, isAdmin = false) => {
+    console.log('in join');
     // leave the current room if any
     if (socket.roomId) {
       socket.leave(socket.roomId);
@@ -203,8 +225,12 @@ io.on('connection', (socket) => {
     socket.roomId = roomId;
 
     if (isAdmin) {
+      const key = `websocket_admin:${roomId}`;
+      console.log('socketId for admin', socket.id, key);
+      redisClient.set(key, socket.id);
       return;
     }
+
     const playerId = players[socket.id].name;
 
     redisClient.set(playerId, socket.id);
