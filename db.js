@@ -9,6 +9,7 @@ const url =
 const client = new MongoClient(url, { useUnifiedTopology: true });
 const db = client.db(dbName);
 const collection = db.collection('game_rooms');
+const level2Collection = db.collection('level2_room');
 
 const player_collection = db.collection('players');
 
@@ -269,11 +270,45 @@ const setupPlayerByRoom = async (playerId, playerRoomId) => {
   }
 };
 
-const checkIfRoomExists = async (playerId, playerRoomId) => {
+const setupLevel2PlayerByRoom = async (playerId, playerRoomId) => {
+  await connect();
+
+  console.log('Processing for level 2', playerId);
+  const db = client.db(dbName);
+  const collection = db.collection('game_rooms');
+
+  const { roomExists, isPlayerExist, updatedSprite } = await checkIfRoomExists(
+    playerId,
+    playerRoomId,
+    true
+  );
+  console.log('the boolean', roomExists);
+
+  if (roomExists && isPlayerExist) {
+    console.log('Both room and player exist');
+    // Perform the set operation
+  } else if (roomExists && !isPlayerExist) {
+    console.log(
+      'Room exists but player is not in the room. Putting player in room'
+    );
+    await updateLevel2RoomWithPlayer(playerId, playerRoomId, updatedSprite);
+  } else if (!roomExists) {
+    console.log(
+      'Room does not exist in level 2, creating new room with player'
+    );
+    await createLevel2NewRoom(playerId, playerRoomId);
+  } else {
+    console.log('There is something wrong trying to add player to a room');
+  }
+};
+
+const checkIfRoomExists = async (playerId, playerRoomId, isLevel2 = false) => {
   await connect();
 
   const db = client.db(dbName);
-  const collection = db.collection('game_rooms');
+  const collection = isLevel2
+    ? db.collection('level2_room')
+    : db.collection('game_rooms');
 
   let roomExists = false;
   let document;
@@ -303,7 +338,9 @@ const checkIfRoomExists = async (playerId, playerRoomId) => {
   const isPlayerExist = roomExists
     ? await checkIfPlayerExistsInRoom(playerId, document)
     : false;
-  const updatedRoomSprites = roomExists ? await updateRoomSprite(document) : {};
+  const updatedRoomSprites = roomExists
+    ? await updateRoomSprite(document, isLevel2)
+    : {};
 
   const roomContains = {
     roomExists: roomExists,
@@ -370,6 +407,27 @@ const createNewRoom = async (playerId, playerRoomId) => {
   return;
 };
 
+const createLevel2NewRoom = async (playerId, playerRoomId) => {
+  const randomSpriteObject = await getRandomSprites(true);
+
+  const roomData = {
+    roomSprites: [randomSpriteObject?.name],
+    roomId: playerRoomId,
+    players: [{ [playerId]: [randomSpriteObject?.randomSprite] }],
+  };
+  level2Collection
+    .insertOne(roomData)
+    .then((result) => {
+      console.log('New player and room inserted successfully!');
+    })
+    .catch((err) => {
+      console.error('Error inserting new player:', err);
+      return;
+    });
+
+  return;
+};
+
 const updateRoomWithPlayer = async (
   playerId,
   playerRoomId,
@@ -419,10 +477,59 @@ const updateRoomWithPlayer = async (
     });
 };
 
-const updateRoomSprite = (document) => {
+const updateLevel2RoomWithPlayer = async (
+  playerId,
+  playerRoomId,
+  updatedRoomSprites
+) => {
+  // Update query
+  const filter = {
+    roomId: playerRoomId,
+  };
+
+  // Update operation
+  const update = {
+    $push: {
+      players: { [playerId]: [updatedRoomSprites?.playerSprite] },
+    },
+  };
+
+  // Define the update operation to override the field
+  const updateField = {
+    $set: {
+      roomSprites: updatedRoomSprites?.roomSprites,
+    },
+  };
+
+  // Perform the update operation
+  await level2Collection.updateOne(filter, updateField, function (err, result) {
+    if (err) {
+      console.error('Error updating document:', err);
+      return;
+    }
+
+    console.log('Field overridden successfully!');
+  });
+
+  await level2Collection
+    .updateOne(filter, update)
+    .then((result) => {
+      if (result.matchedCount === 1) {
+        console.log('Player added to room');
+      } else {
+        console.log('No matching document found');
+      }
+    })
+    .catch((err) => {
+      console.error('Error adding player to room:', err);
+      return;
+    });
+};
+
+const updateRoomSprite = (document, isLevel2 = false) => {
   console.log('the document in finding sprite', document);
   const roomSprites = document?.roomSprites;
-  const newPlayerObject = setPlayerObjects(roomSprites);
+  const newPlayerObject = setPlayerObjects(roomSprites, isLevel2);
 
   console.log('Name about to be pushed', newPlayerObject?.name);
   const name = newPlayerObject?.name;
@@ -444,11 +551,14 @@ const updateRoomSprite = (document) => {
   };
 };
 
-const getPlayerSprites = async (playerRoomId, playerId) => {
+const getPlayerSprites = async (playerRoomId, playerId, isLevel2 = false) => {
   await connect();
 
+  console.log('the level in get player Sprites', isLevel2);
   const db = client.db(dbName);
-  const collection = db.collection('game_rooms');
+  const collection = isLevel2
+    ? db.collection('level2_room')
+    : db.collection('game_rooms');
 
   let roomExists = false;
   let document;
@@ -483,7 +593,7 @@ const getPlayerSprites = async (playerRoomId, playerId) => {
   // const playerSprites = players[playerId];
 
   const playerSpritesFind = players?.find((obj) =>
-    obj.hasOwnProperty(playerId)
+    obj?.hasOwnProperty(playerId)
   );
 
   // this is to get all players in the room
@@ -526,4 +636,5 @@ module.exports = {
   dataActions,
   setupPlayerByRoom,
   getPlayerSprites,
+  setupLevel2PlayerByRoom,
 };

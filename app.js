@@ -11,7 +11,12 @@ const io = require('socket.io')(server, {
   },
 });
 const cors = require('cors');
-const { dataActions, setupPlayerByRoom, getPlayerSprites } = require('./db');
+const {
+  dataActions,
+  setupPlayerByRoom,
+  getPlayerSprites,
+  setupLevel2PlayerByRoom,
+} = require('./db');
 const { client } = require('./mongo');
 const { addObject, removeObject } = require('./utils');
 
@@ -213,7 +218,7 @@ io.on('connection', (socket) => {
   });
 
   // Listen for a player joining a room
-  socket.on('joinRoom', async (roomId, isAdmin = false) => {
+  socket.on('joinRoom', async (roomId, isAdmin = false, level = 'LEVEL_1') => {
     console.log('in join');
     // leave the current room if any
     if (socket.roomId) {
@@ -223,6 +228,9 @@ io.on('connection', (socket) => {
     //Join the new room
     socket.join(roomId);
     socket.roomId = roomId;
+
+    console.log('the level', level);
+    const isLevel2 = level === 'LEVEL_2' ? true : false;
 
     if (isAdmin) {
       const key = `websocket_admin:${roomId}`;
@@ -239,9 +247,14 @@ io.on('connection', (socket) => {
       `Adding ${players[socket.id].name} to room ${roomId} in mongoDB`
     );
 
-    await setupPlayerByRoom(playerId, roomId);
+    if (isLevel2) {
+      await setupLevel2PlayerByRoom(playerId, roomId);
+    } else {
+      // first setup player room
+      await setupPlayerByRoom(playerId, roomId);
+    }
 
-    const newSpriteObject = await getPlayerSprites(roomId, playerId);
+    const newSpriteObject = await getPlayerSprites(roomId, playerId, isLevel2);
 
     console.log('Player added to room');
 

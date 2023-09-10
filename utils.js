@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 // @ts-check
 const { exists, client: redisClient } = require('./redis');
-const { shape_sprites } = require('./sprite');
+const { shape_sprites, shape_sprites_level_2 } = require('./sprite');
 
 const getMessages = async (roomId = '0', offset = 0, size = 50) => {
   /**
@@ -30,12 +30,15 @@ function areObjectsEqual(obj1, obj2) {
   return obj1?.name === obj2;
 }
 
-const setPlayerObjects = (roomSpritesIndex) => {
+const setPlayerObjects = (roomSpritesIndex, isLevel2 = false) => {
   let object = [];
   let nameObject = '';
+
+  let sprites = isLevel2 ? shape_sprites_level_2 : shape_sprites;
+
   // Iterate over A and add one object to B if not already present
-  for (let i = 0; i < shape_sprites.length; i++) {
-    const objA = shape_sprites[i];
+  for (let i = 0; i < sprites.length; i++) {
+    const objA = sprites[i];
     let found = false;
 
     for (let j = 0; j < roomSpritesIndex.length; j++) {
@@ -62,12 +65,13 @@ const setPlayerObjects = (roomSpritesIndex) => {
   };
 };
 
-const getRandomSprites = () => {
+const getRandomSprites = (isLevel2 = false) => {
+  const shapes = isLevel2 ? shape_sprites_level_2 : shape_sprites;
   // Generate a random index within the range of A.length
-  const randomIndex = Math.floor(Math.random() * shape_sprites?.length);
+  const randomIndex = Math.floor(Math.random() * shapes?.length);
 
   // Retrieve the random object from array A
-  const randomObject = shape_sprites[randomIndex];
+  const randomObject = shapes[randomIndex];
   const name = randomObject?.name;
 
   console.log('random index', randomObject[name]);
