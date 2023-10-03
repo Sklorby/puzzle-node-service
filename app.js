@@ -32,6 +32,13 @@ let redisClient = new Redis(redUr);
 // local run
 // let redisClient = new Redis();
 
+const updateObjectOwner = (playerObject, playerId) => {
+  console.log('updateing value');
+  playerObject['owner'] = playerId;
+  console.log('the updated object ', playerObject);
+  return playerObject;
+};
+
 // Connect to the server
 client.connect((err) => {
   if (err) {
@@ -87,8 +94,10 @@ io.on('connection', (socket) => {
     }
   );
 
-  socket.on('sendToRequestingPlayer', (requestingPlayer, playerObject) => {
+  socket.on('sendToRequestingPlayer', (requestingPlayer, requestedObject) => {
     console.log(`Sending object to ${requestingPlayer}`);
+
+    const playerObject = updateObjectOwner(requestedObject, requestingPlayer);
 
     let name = `${requestingPlayer}-list`;
     redisClient.lpush(name, playerObject);

@@ -1,6 +1,10 @@
 const dbName = 'puzzle_game';
 const { MongoClient } = require('mongodb');
-const { getRandomSprites, setPlayerObjects } = require('./utils');
+const {
+  getRandomSprites,
+  setPlayerObjects,
+  addOwnerToEachObject,
+} = require('./utils');
 
 // Connection URL
 const url =
@@ -609,10 +613,18 @@ const getPlayerSprites = async (playerRoomId, playerId, isLevel2 = false) => {
   const playerSprites = playerSpritesFind[playerId];
 
   console.log('Returning player sprite', playerSprites);
+  const transformedPlayerObject = addOwnerToEachObject(
+    playerId,
+    playerSprites[0]
+  );
+  console.log('Returning player sprite transformed', transformedPlayerObject);
   await close();
 
+  let finalSprites = [];
+  finalSprites.push(transformedPlayerObject);
+
   const response = {
-    playerSprites,
+    playerSprites: finalSprites,
     players,
   };
   return response;

@@ -146,9 +146,32 @@ const obj = [
 const newObject = { id: 3, name: 'Object 6' };
 const res = removeObject(obj, 'John', 3);
 
-console.log('the rse', JSON.stringify(res));
+const testObj = [
+  { id: 'p2-01-A1', isVisible: true, shapeUri: 'shapeA1-029' },
+  { id: 'p2-02-A1', isVisible: true, shapeUri: 'shapeA1-030' },
+  { id: 'p2-01-A4', isVisible: true, shapeUri: 'shapeA4-031' },
+  { id: 'p2-01-A3', isVisible: true, shapeUri: 'shapeA3-032' },
+];
+const addOwnerToEachObject = (playerId, objectsList) => {
+  if (
+    objectsList === null ||
+    objectsList === undefined ||
+    objectsList.length <= 0
+  ) {
+    return null;
+  }
+  const fieldName = 'owner';
+  objectsList?.forEach((obj) => {
+    obj[fieldName] = playerId;
+  });
+
+  return objectsList;
+};
+
+console.log('the rse', addOwnerToEachObject('hdfhhdf', testObj));
 
 module.exports = {
+  addOwnerToEachObject,
   addObject,
   removeObject,
   getMessages,
