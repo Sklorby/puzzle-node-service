@@ -161,8 +161,14 @@ const addOwnerToEachObject = (playerId, objectsList) => {
     return null;
   }
   const fieldName = 'owner';
+  const isOnBoard = 'isOnBoard';
+  const xVar = 'x';
+  const yVar = 'y';
   objectsList?.forEach((obj) => {
     obj[fieldName] = playerId;
+    obj[isOnBoard] = true;
+    obj[xVar] = 0;
+    obj[yVar] = 0;
   });
 
   return objectsList;

@@ -1,5 +1,6 @@
 const express = require('express');
 const Redis = require('ioredis');
+const util = require('util');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
@@ -140,6 +141,33 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on(
+    'UPDATE_SPRITES_ACROSS_ROOM',
+    async (roomId, playerId, playerValues) => {
+      let playerAllVals = [];
+      try {
+        playerAllVals = await storePlayedValuesIntoRedis(
+          roomId,
+          playerValues,
+          playerId
+        );
+
+        const obj = await redisClient.get(`playground-${roomId}`);
+
+        console.log(
+          'The returned updated-sprite for roommid',
+          roomId,
+          JSON.parse(obj),
+          playerValues,
+          playerAllVals
+        );
+        socket.to(roomId).emit('EMIT_VALUES_IN_ROOMS', playerAllVals);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  );
+
   // Listen for player values
   socket.on('playerValues', async (roomId, playerId, values, isRemove) => {
     console.log(
@@ -192,7 +220,7 @@ io.on('connection', (socket) => {
           // Retrieve the object from Redis and perform operations
           getObjFromRedis(key, async (retrievedObj) => {
             res = await addObject(retrievedObj, playerId, playerObject);
-            console.log('emitting values to other players:', res);
+            console.log('emitting values to other players:', res, roomId);
             socket.to(roomId).emit('playerValues', res);
             const adminKey = `websocket_admin:${roomId}`;
             console.log('the admin key in exists', adminKey, admins[roomId]);
@@ -202,7 +230,7 @@ io.on('connection', (socket) => {
           });
         } else {
           res = await addObject([], playerId, playerObject);
-          console.log('emitting values to other players:', res);
+          console.log('emitting values to other players:', res, roomId);
           socket.to(roomId).emit('playerValues', res);
           const adminKey = `websocket_admin:${roomId}`;
           console.log('the admin key', adminKey, admins[roomId]);
@@ -319,6 +347,68 @@ function doesObjExistInRedis(key, callback) {
       callback(exists === 1);
     }
   });
+}
+
+const redisExistsAsync = util.promisify(redisClient.exists).bind(redisClient);
+const redisGetAsync = util.promisify(redisClient.get).bind(redisClient);
+const redisSetAsync = util.promisify(redisClient.set).bind(redisClient);
+async function storePlayedValuesIntoRedis(rawRoomId, playerValues, player) {
+  const roomId = `playground=${rawRoomId}`;
+  try {
+    let updatedValues = [];
+
+    const roomExists = await redisExistsAsync(roomId);
+
+    if (roomExists) {
+      updatedValues = await updateRoomValues(roomId, player, playerValues);
+    } else {
+      updatedValues = await createNewRoom(roomId, player, playerValues);
+    }
+
+    return updatedValues;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function updateRoomValues(roomId, player, playerValues) {
+  const roomData = await redisGetAsync(roomId);
+
+  const parsedData = JSON.parse(roomData);
+
+  const updatedData = updateValues(parsedData, player, playerValues);
+
+  await redisSetAsync(roomId, JSON.stringify(updatedData));
+
+  return updatedData;
+}
+
+function updateValues(existingValues, player, newValues) {
+  // logic to update existingValues array
+  const values = existingValues;
+  const playerExists = values.some((v) => v.hasOwnProperty(player));
+
+  if (playerExists) {
+    // Update existing player
+    values.forEach((v) => {
+      if (v.hasOwnProperty(player)) {
+        v[player] = newValues;
+      }
+    });
+  } else {
+    // Add new player
+    values.push({ [player]: newValues });
+  }
+
+  return values;
+}
+
+async function createNewRoom(roomId, player, playerValues) {
+  const newData = [{ [player]: playerValues }];
+
+  await redisSetAsync(roomId, JSON.stringify(newData));
+
+  return newData;
 }
 
 server.listen(PORT, () => {
