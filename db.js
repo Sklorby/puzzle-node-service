@@ -286,6 +286,7 @@ const setupLevel2PlayerByRoom = async (playerId, playerRoomId) => {
     playerRoomId,
     true
   );
+  console.log('the updated sprite', updatedSprite);
   console.log('the boolean', roomExists);
 
   if (roomExists && isPlayerExist) {
@@ -491,6 +492,9 @@ const updateLevel2RoomWithPlayer = async (
     roomId: playerRoomId,
   };
 
+  console.log(
+    `${playerId} with object ${updatedRoomSprites} being pusdhed into DB`
+  );
   // Update operation
   const update = {
     $push: {
@@ -549,6 +553,10 @@ const updateRoomSprite = (document, isLevel2 = false) => {
   newSprites.push(name);
 
   console.log('After push', roomSprites);
+  console.log(
+    'The player sprite being returned',
+    newPlayerObject?.randomSprite
+  );
   return {
     roomSprites: newSprites,
     playerSprite: newPlayerObject?.randomSprite,

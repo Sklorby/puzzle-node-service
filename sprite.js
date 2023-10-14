@@ -209,7 +209,7 @@ const shape_sprites_level_2 = [
   { name: 'shapeSetOne', shapeSetOne: shapeLevel2SetOne },
   { name: 'shapeSetTwo', shapeSetTwo: shapeLevel2SetTwo },
   { name: 'shapeSetThree', shapeSetThree: shapeLevel2SetThree },
-  { name: 'shapeSetFour', shapeSetThree: shapeLevel2SetFour },
+  { name: 'shapeSetFour', shapeSetFour: shapeLevel2SetFour },
 ];
 
 module.exports = {

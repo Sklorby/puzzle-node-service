@@ -34,15 +34,24 @@ const setPlayerObjects = (roomSpritesIndex, isLevel2 = false) => {
   let object = [];
   let nameObject = '';
 
+  console.log('Is this level 2?', isLevel2);
   let sprites = isLevel2 ? shape_sprites_level_2 : shape_sprites;
+
+  console.log('Sprites superset', sprites);
+  console.log(
+    'the actual room sprites to be compared against',
+    roomSpritesIndex
+  );
 
   // Iterate over A and add one object to B if not already present
   for (let i = 0; i < sprites.length; i++) {
     const objA = sprites[i];
+    console.log('the object objA', objA);
     let found = false;
 
     for (let j = 0; j < roomSpritesIndex.length; j++) {
       const objB = roomSpritesIndex[j];
+      console.log('the object objB', objB);
 
       if (areObjectsEqual(objA, objB)) {
         found = true;
@@ -51,6 +60,7 @@ const setPlayerObjects = (roomSpritesIndex, isLevel2 = false) => {
     }
 
     if (!found) {
+      console.log('the object not found - pushing into array', objA);
       nameObject = objA?.name;
       roomSpritesIndex.push(objA[nameObject]);
       object = objA[nameObject];
@@ -59,6 +69,8 @@ const setPlayerObjects = (roomSpritesIndex, isLevel2 = false) => {
   }
 
   console.log('th anem object', nameObject);
+  console.log('the sprite in setPlayerObjects', object);
+
   return {
     randomSprite: object,
     name: nameObject,
@@ -69,6 +81,8 @@ const getRandomSprites = (isLevel2 = false) => {
   const shapes = isLevel2 ? shape_sprites_level_2 : shape_sprites;
   // Generate a random index within the range of A.length
   const randomIndex = Math.floor(Math.random() * shapes?.length);
+  console.log('the shape size to match rondom index', shapes?.length);
+  console.log('the random index generated', randomIndex);
 
   // Retrieve the random object from array A
   const randomObject = shapes[randomIndex];
