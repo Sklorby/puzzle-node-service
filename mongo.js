@@ -1,4 +1,4 @@
-npm install mongodb // new line
+//npm install mongodb // new line
 
 const { MongoClient } = require('mongodb');
 
