@@ -8,7 +8,9 @@ const {
 
 // Connection URL
 const url =
-  `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.9uq0rgf.mongodb.net/puzzle_game?retryWrites=true&w=majority`;
+  //`mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.vgw8s.mongodb.net/puzzle_game?retryWrites=true&w=majority`;
+  `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.vgw8s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`; // updated connection url
+
 
 const client = new MongoClient(url, { useUnifiedTopology: true });
 const db = client.db(dbName);
