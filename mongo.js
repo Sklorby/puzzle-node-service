@@ -6,7 +6,7 @@ const { MongoClient } = require('mongodb');
 //const url = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.vgw8s.mongodb.net/puzzle_game?retryWrites=true&w=majority`;
 
 //updated connection URL
-const url = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@cluster0.vgw8s.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const url = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@puzzle-game.jxppyqk.mongodb.net/?retryWrites=true&w=majority&appName=puzzle-game`;
 
 
 // local test
